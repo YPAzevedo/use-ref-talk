@@ -9,6 +9,35 @@ import { Spacer, Confetti } from './scripts/components'
 
 ## Thank you for attending!! 👋
 
+Bonus Confetti code
+
+<Spacer />
+
+```js
+
+export function Confetti() {
+  const [show, setShow] = React.useState(false);
+  const { width, height } = useWindowSize();
+  const timerRef = React.useRef(0);
+
+  const handleClick = () => {
+    setShow(true);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setShow(false);
+    }, 10000);
+  };
+
+  return (
+    <div>
+      <Button onClick={handleClick}>Click here!</Button>
+      {show ? <ReactConfetti width={width} height={height} /> : null}
+    </div>
+  );
+}
+
+```
+
 <Spacer />
 
 <Confetti/>
