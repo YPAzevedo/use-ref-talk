@@ -62,7 +62,7 @@ export function AccessDOM() {
 }
 //Input focus useImperativeHandle
 const Input = React.forwardRef((props, ref) => {
-  const inputRef = React.useRef(null)
+  const inputRef = React.useRef(null);
   React.useImperativeHandle(
     ref,
     () => ({
@@ -71,7 +71,9 @@ const Input = React.forwardRef((props, ref) => {
     []
   );
 
-  return <input style={{ padding: 8, borderRadius: 8 }} ref={inputRef} {...props} />
+  return (
+    <input style={{ padding: 8, borderRadius: 8 }} ref={inputRef} {...props} />
+  );
 });
 
 export function InputFocus() {
@@ -90,22 +92,20 @@ export function InputFocus() {
 export function Confetti() {
   const [show, setShow] = React.useState(false);
   const { width, height } = useWindowSize();
-  const timerRef = React.useRef(0)
+  const timerRef = React.useRef(0);
 
   const handleClick = () => {
-    setShow(true)
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        setShow(false)
-      }, 3000)
-    }
-  }
+    setShow(true);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setShow(false);
+    }, 10000);
+  };
 
   return (
     <div>
-    <Button onClick={handleClick}>Click here!</Button>
+      <Button onClick={handleClick}>Click here!</Button>
       {show ? <ReactConfetti width={width} height={height} /> : null}
     </div>
-  )
+  );
 }
