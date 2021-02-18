@@ -1,0 +1,228 @@
+<!-- classes: title -->
+<!-- section-title: useRef -->
+
+import { CounterRef, Spacer, CounterLet, AccessDOM } from './scripts/components';
+import useRefTweet from './assets/dan-useref.png';
+
+
+
+# useRef
+
+<Spacer />
+
+useRef is a really underestimated hook that provides you a way to create a mutable object that persists between renders.
+That way you can keep values around to use for internal purposes on your components and hooks. Its similar to `useState` in the fact
+that it holds some sort of state for the component. 
+
+<Spacer />
+
+<img src={useRefTweet} />
+
+<Spacer />
+
+
+```js
+
+const ref = useRef("🐍");
+
+ref.current === 🐍" // true
+
+```
+
+<Spacer />
+
+This will create a object that has a `current` property on it, and thats where you can store
+what ever values you want. The API is pretty simple, the value you pass into the hook will be set as the internal value,
+note this value passed in will only be set in the first render.
+
+---
+
+Mutating the useRef object will not trigger a rerender and thats its gratest feature. The example below shows the
+implementation of a counter using useRef. Note that this will not work like useState does.
+
+<Spacer />
+
+```js
+
+function CounterRef() {
+  const countRef = React.useRef(0);
+  const rerender = useRerender();
+  return (
+    <div>
+      <h1>{countRef.current}</h1>
+      <button onClick={() => countRef.current--}>-</button>
+      <button onClick={() => countRef.current++}>+</button>
+      <button onClick={rerender}>Rerender</button>
+    </div>
+  );
+}
+
+```
+
+<CounterRef/>
+
+---
+
+Ok, and now you might be wondering why would you need useRef? Can't you just have a variable outside your component
+that you can use? Well you could, but it would not work as you would expect.
+
+```js
+
+let counter = 0;
+
+export function CounterLet() {
+  const rerender = useRerender();
+  return (
+    <div>
+      <h1>{counter}</h1>
+      <Button onClick={() => counter--}>-</Button>
+      <Button onClick={() => counter++}>+</Button>
+      <Button onClick={rerender}>Rerender</Button>
+    </div>
+  );
+}
+
+```
+
+<CounterLet/>
+
+<Spacer />
+
+👉🏼 In the next slide we will see the issue with this approach.
+
+---
+
+## The issue with module level variables.
+
+<Spacer />
+
+Play around with these examples, two examples of the same component
+
+<Spacer />
+
+```js
+
+// let counter = ...
+<CounterLet/>
+<CounterLet/>
+
+```
+
+<CounterLet/>
+<CounterLet/>
+
+<Spacer />
+
+You can quickly see the issue here. In this case they are sharing the same instance of the counter variable.
+
+So now we can see how important useRef is to give use persistency and isolation in our components.
+
+---
+<!-- section-title: Accessing the DOM with useRef -->
+# Accessing DOM
+
+<Spacer />
+
+The most common use case you will see for useRef is for accessing te undelying DOM element
+that is behind the JSX we write. That way we can interact directly with the DOM element if needed.
+
+<Spacer />
+
+Note that you should only manipulate the element inside the ref after render. Since the DOM element has not been
+created yet, before the render occurs.
+
+<Spacer />
+
+```js
+
+export function AccessDOM() {
+  const domRef = React.useRef(null);
+  const [hide, setHide] = React.useState(false);
+  const [el, setEl] = React.useState(domRef.current);
+
+  const toggle = () => setHide((h) => !h);
+
+  React.useLayoutEffect(() => {
+    setEl(domRef.current &&  domRef.current.nodeName )
+  }, [hide]);
+
+  return (
+    <div>
+      {!hide && <div ref={domRef}>Hello 👋</div>}
+      <span >{el ? `Node name is a ${el}` : `Node is ${el}`}</span>
+      <Button onClick={toggle}>Toggle Hide</Button>
+    </div>
+  );
+}
+
+```
+
+<Spacer />
+
+<AccessDOM />
+
+---
+<!-- section-title: useRef and dependency arrays -->
+# useRef and dependency array
+
+<Spacer />
+
+You can use the useRef hook as a bail out for passing something into the dependency array
+that you know will be different every render. You want to have the latest value of the unstable value,
+but not invalidate the dependency array just because of it.
+
+<Spacer />
+
+In this case below you will have this useEffect run on every render
+just because the inline callback is a new one on every render. If you only omit from the
+dependency array and break the rules of hooks you might end up with a stale function inside the useEffect,
+that point to stale variables from previous renders.
+
+```js
+
+const useHook(aInlineCallback) {
+  // more stuff here
+  React.useEffect(() => {
+    aInlineCallback(other, stable, deps)
+  }, [other, stable, deps, aInlineCallback])
+  // more stuff here
+}
+// hook usage
+useHook(() => (...))
+
+```
+
+---
+
+## How to bail out of dependency array.
+
+<Spacer />
+
+In this case below you will have the useEffect run only when the stable values on the dependency array changes,
+but you still get the benefits of having the most up to date funtion. 
+
+<Spacer />
+
+NOTE: if you want you effect to run when
+the function changes you should tell the user to pass the function wrapped in useCallback.
+
+<Spacer />
+
+```js
+
+const useHook(aInlineCallback) {
+  const callbackRef = React.useRef(aInlineCallback);
+
+  React.useLayoutEffect(() => {
+    callbackRef.current = aInlineCallback
+  });
+  // more stuff here
+  React.useEffect(() => {
+    callbackRef.current(other, stable, deps)
+  }, [other, stable, deps]);
+  // more stuff here
+}
+// hook usage
+useHook(() => (...));
+
+```

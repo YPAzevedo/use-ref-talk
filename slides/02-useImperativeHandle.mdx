@@ -1,0 +1,70 @@
+<!-- classes: title -->
+<!-- section-title: useImperativeHandle -->
+
+import { Spacer, InputFocus } from './scripts/components'
+
+# useImperativeHandle ↩️
+
+<Spacer />
+
+First let look at this quote from the React docs: 
+
+> useImperativeHandle customizes the instance value that is exposed to parent components when using ref. As always, imperative code using refs should be avoided in most cases. useImperativeHandle should be used with forwardRef
+
+<Spacer />
+
+So in essence useImperativeHandle gives us a way to break the trade mark of React which is one way data flow.
+It gives you the power to access internal values from the child on the parent component
+
+<Spacer />
+
+As the first paremeter you get the forwarded ref, the second paremeter is a calback with the value you want to inject in the ref, 
+and similar to the useEffect/useLayoutEffect hooks, it has a third paremeter that is a dependency array so you can let the hook know
+when it should update the injected values. The undelying implementation of useImperativeHandle uses useLayoutEffect, so it run `after` DOM updates but before paint.
+
+
+```js
+
+React.useImperativeHandle(ref, () => "🚀",[]);
+
+ref.current === "🚀" // true
+
+```
+
+---
+
+## Quick example
+
+<Spacer />
+
+Here you can see how we are able to make the parent component control the child input focus.
+This API is mostly used for modals, where the state of the modal is held in the child, but you still want
+the parent to control it.
+
+<Spacer />
+
+```js
+
+const Input = React.forwardRef((props, ref) => {
+  const inputRef = React.useRef(null)
+
+  React.useImperativeHandle(ref, () => ({ focus: () => inputRef.current.focus() }), []);
+
+  return <input ref={inputRef} {...props} />;
+});
+
+export function InputFocus() {
+  const inputRef = React.useRef(null);
+
+  return (
+    <div>
+      <Input ref={inputRef} placeholder="useImperativeHandle" />
+      <Button onClick={() => inputRef.current.focus()}>Focus</Button>
+    </div>
+  );
+}
+
+```
+
+<InputFocus />
+

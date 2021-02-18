@@ -1,0 +1,24 @@
+{
+  "name": "ref-talk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "fusuma start",
+    "start:prod": "fusuma start-prod",
+    "build": "fusuma build",
+    "deploy": "npm run build && fusuma deploy",
+    "pdf": "npm run build && fusuma pdf"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^17.0.2",
+    "fusuma": "^2.5.0"
+  },
+  "dependencies": {
+    "react": "^17.0.1",
+    "react-confetti": "^6.0.0"
+  }
+}

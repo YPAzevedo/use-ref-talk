@@ -1,0 +1,33 @@
+<!-- classes: title -->
+<!-- section-title: Intro -->
+
+import { Spacer } from './scripts/components'
+
+# useRef and useImperativeHandle hooks 🎣 
+
+<Spacer />
+
+Hello 👋!! Welcome to the useRef and useImperativeHandle talk,
+in this talk i will cover everything, well almost everything about useRef and useImperativeHandle.
+
+<Spacer />
+
+Those are pretty simple hooks but they are really powerful, specially useRef.
+
+<Spacer />
+
+- The API's
+- When to use
+- When not to use
+- Common questions
+
+<Spacer />
+
+```js
+
+const ref = useRef(null)
+
+const handlers = useImperativeHandle(ref, () => ({ handle: () => (...) }), [])
+
+```
+
