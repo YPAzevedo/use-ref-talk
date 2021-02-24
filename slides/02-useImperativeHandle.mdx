@@ -37,8 +37,8 @@ ref.current === "🚀" // true
 
 <Spacer />
 
-Here you can see how we are able to make the parent component control the child input focus.
-This API is mostly used for modals, where the state of the modal is held in the child, but you still want
+Here you can see how we are able to make the parent component control the child modal visibility.
+This API is commonly used for modals, where the state of the modal is held in the child, but you still want
 the parent to control it.
 
 <Spacer />
@@ -49,7 +49,7 @@ const Modal = React.forwardRef((props, ref) => {
   const [open, toggle] = React.useReducer((state) => !state, false)
 
   React.useImperativeHandle(ref, () => ({ toggle }), []);
-  
+
   return open ? <span {...props}>👀</span> : null;
 });
 
