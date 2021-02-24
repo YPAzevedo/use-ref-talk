@@ -61,28 +61,26 @@ export function AccessDOM() {
   );
 }
 //Input focus useImperativeHandle
-const Input = React.forwardRef((props, ref) => {
-  const inputRef = React.useRef(null);
+const Modal = React.forwardRef((props, ref) => {
+  const [open, toggle] = React.useReducer((state) => !state, false)
   React.useImperativeHandle(
     ref,
     () => ({
-      focus: () => inputRef.current.focus(),
+      toggle,
     }),
     []
   );
 
-  return (
-    <input style={{ padding: 8, borderRadius: 8 }} ref={inputRef} {...props} />
-  );
+  return open ? <span {...props}>👀</span> : null;
 });
 
-export function InputFocus() {
-  const inputRef = React.useRef(null);
+export function Component() {
+  const modalRef = React.useRef(null);
 
   return (
     <div>
-      <Input ref={inputRef} placeholder="useImperativeHandle" />
-      <Button onClick={() => inputRef.current.focus()}>Focus</Button>
+      <Modal ref={modalRef} />
+      <Button onClick={() => modalRef.current.toggle()}>Open</Button>
     </div>
   );
 }
